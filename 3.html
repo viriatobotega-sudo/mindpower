@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="google-site-verification" content="lrfXnDIgUTuzmP2fNC4M6sUOpiewQPZbv2JIgM1xLlk" />
+  <title>Mind Power</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #ffffff;
+      color: #000;
+      min-height: 100vh;
+      padding: 0;
+    }
+    header {
+      text-align: center;
+      padding: 20px 0;
+      border-bottom: 1px solid #eee;
+    }
+    header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #000;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .quote-card {
+      background: #fcfcfc;
+      border: 1px solid #eee;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      position: relative;
+      min-height: 180px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .quote-text {
+      font-size: 22px;
+      line-height: 1.5;
+      text-align: center;
+      font-weight: 600;
+      color: #000;
+      margin-bottom: 30px;
+      padding: 0 10px;
+    }
+    .author-img {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #1877f2;
+    }
+    .author-name {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #555;
+    }
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 10px;
+      font-size: 14px;
+      color: #555;
+    }
+    .action-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+    }
+    .action-btn svg {
+      width: 20px;
+      height: 20px;
+      margin-bottom: 4px;
+      fill: none;
+      stroke: #000;
+      stroke-width: 1.5;
+    }
+    .action-btn.like-btn.liked svg {
+      fill: #000;
+      stroke: none;
+    }
+    .action-btn span {
+      font-size: 12px;
+      color: #555;
+    }
+    .fb-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #1877f2;
+      color: white;
+      padding: 14px 20px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+      box-shadow: 0 4px 14px rgba(24, 119, 242, 0.3);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s;
+    }
+    .fb-btn:hover {
+      transform: translateY(-2px);
+    }
+    .cookies-banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #1a1a1a;
+      color: white;
+      padding: 14px 20px;
+      text-align: center;
+      font-size: 14px;
+      z-index: 1001;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .cookies-banner button {
+      background: white;
+      color: #1a1a1a;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #777;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Mind Power</h1>
+  </header>
+
+  <div class="container" id="quotes-container">
+    <div class="loading">Carregando frases poderosas...</div>
+  </div>
+
+  <a href="https://www.facebook.com/profile.php?id=61580141993544" target="_blank" class="fb-btn">
+    💬 Seguir no Facebook
+  </a>
+
+  <div class="cookies-banner" id="cookies-banner">
+    Usamos cookies para garantir a melhor experiência.  
+    <button id="accept-cookies">Aceitar</button>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script>
+    // Configuração do Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyDj1qqCBztEpF31n9UU3DFKwiymc2Bd-iM",
+      authDomain: "bot-ia-20e75.firebaseapp.com",
+      databaseURL: "https://bot-ia-20e75-default-rtdb.firebaseio.com",
+      projectId: "bot-ia-20e75",
+      storageBucket: "bot-ia-20e75.appspot.com",
+      messagingSenderId: "601684351023",
+      appId: "1:601684351023:android:e94d0ab92f512c4cb80eda"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database().ref('frases');
+
+    // Elementos
+    const quotesContainer = document.getElementById('quotes-container');
+    const cookiesBanner = document.getElementById('cookies-banner');
+    const acceptBtn = document.getElementById('accept-cookies');
+
+    // Aceitar cookies
+    if (localStorage.getItem('cookiesAccepted')) {
+      cookiesBanner.style.display = 'none';
+    } else {
+      acceptBtn.addEventListener('click', () => {
+        localStorage.setItem('cookiesAccepted', 'true');
+        cookiesBanner.style.display = 'none';
+      });
+    }
+
+    // Carregar frases
+    db.on('value', (snapshot) => {
+      const data = snapshot.val();
+      quotesContainer.innerHTML = '';
+      if (data) {
+        Object.keys(data).reverse().forEach(key => {
+          const item = data[key];
+          const frase = item.frase || '';
+          const likes = item.likes || 0;
+          const liked = getCookie(`liked_${key}`) === 'true';
+
+          const card = document.createElement('div');
+          card.className = 'quote-card';
+
+          card.innerHTML = `
+            <img src="mind.png" alt="Perfil" class="author-img">
+            <div class="quote-text">"${frase}"</div>
+            <div class="author-name">Mind Power</div>
+            <div class="actions">
+              <div class="action-btn like-btn ${liked ? 'liked' : ''}" data-id="${key}" data-likes="${likes}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+                <span>${liked ? 'curtido' : 'curtir'}</span>
+              </div>
+              <div class="action-btn share-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path d="M18 8c0 1.66-1.34 3-3 3-1.5 0-2.75-1.08-3-2.5-1.5 1.5-4 1.5-5.5 0C5.25 9.42 4 10.5 4 12c0 2.21 1.79 4 4 4h8c2.21 0 4-1.79 4-4 0-1.5-.5-3-2-3.5V6l-4 4 4 4v-2.5c2 0 3.5-1.5 3.5-3.5s-1.5-3.5-3.5-3.5z"/>
+                </svg>
+                <span>partilhar</span>
+              </div>
+            </div>
+          `;
+
+          // Curtir
+          card.querySelector('.like-btn').addEventListener('click', function () {
+            const id = this.getAttribute('data-id');
+            const liked = this.classList.contains('liked');
+            const currentLikes = parseInt(this.getAttribute('data-likes'));
+
+            if (!liked) {
+              db.child(id).update({ likes: currentLikes + 1 });
+              setCookie(`liked_${id}`, 'true', 30);
+              this.classList.add('liked');
+              this.querySelector('span').textContent = 'curtido';
+            }
+          });
+
+          // Partilhar
+          card.querySelector('.share-btn').addEventListener('click', function () {
+            const message = `Frase motivacional: 💪\n"${frase}"\n\nVeja mais frases como esta, entrando no link oficial do [Mindpower]\nhttps://web-mindpower.vercel.app/`;
+            if (navigator.share) {
+              navigator.share({ text: message }).catch(() => copyFallback(message));
+            } else {
+              copyFallback(message);
+            }
+          });
+
+          function copyFallback(message) {
+            navigator.clipboard.writeText(message)
+              .then(() => alert('Frase copiada para compartilhar!'))
+              .catch(err => console.error('Erro ao copiar:', err));
+          }
+
+          quotesContainer.appendChild(card);
+        });
+      } else {
+        quotesContainer.innerHTML = '<div class="quote-card"><div class="quote-text">Nenhuma frase ainda. Adicione no painel!</div></div>';
+      }
+    });
+
+    // Cookies
+    function setCookie(name, value, days) {
+      const d = new Date();
+      d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+      document.cookie = name + "=" + value + ";path=/; expires=" + d.toUTCString();
+    }
+    function getCookie(name) {
+      const value = "; " + document.cookie;
+      const parts = value.split("; " + name + "=");
+      if (parts.length === 2) return parts.pop().split(";").shift();
+    }
+  </script>
+</body>
+</html>
