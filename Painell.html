@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Painel Mind Power</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f4f6f9;
+      color: #1a1a1a;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    header {
+      text-align: center;
+      padding: 20px 0;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    header h1 {
+      font-size: 28px;
+      color: #000;
+      font-weight: 700;
+    }
+    .verified {
+      display: inline-flex;
+      align-items: center;
+      font-size: 16px;
+      color: #1877f2;
+    }
+    .verified::after {
+      content: "✓";
+      margin-left: 5px;
+      font-weight: bold;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .form {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+    .form h2 {
+      margin-bottom: 16px;
+      color: #1a1a1a;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #333;
+    }
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      font-family: 'Poppins', sans-serif;
+    }
+    .form-group textarea {
+      height: 100px;
+      resize: vertical;
+    }
+    .btn {
+      background: #1877f2;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .btn:hover {
+      background: #166ed4;
+      transform: translateY(-1px);
+    }
+    .btn-danger {
+      background: #e53935;
+    }
+    .btn-danger:hover {
+      background: #c62828;
+    }
+    .quotes-list {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .quote-item {
+      padding: 16px 20px;
+      border-bottom: 1px solid #eee;
+      position: relative;
+    }
+    .quote-item:last-child {
+      border-bottom: none;
+    }
+    .quote-text {
+      font-size: 18px;
+      line-height: 1.5;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .quote-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      color: #555;
+    }
+    .quote-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .quote-actions button {
+      padding: 6px 10px;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .edit-btn {
+      background: #ffb100;
+      color: white;
+    }
+    .delete-btn {
+      background: #e53935;
+      color: white;
+    }
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #777;
+    }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: #1877f2;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Painel Mind Power <span class="verified">@Mindpower</span></h1>
+  </header>
+
+  <div class="container">
+    <a href="index.html" class="back-link">← Voltar ao site</a>
+
+    <div class="form" id="add-form">
+      <h2>➕ Adicionar Nova Frase</h2>
+      <div class="form-group">
+        <label for="frase">Frase</label>
+        <textarea id="frase" placeholder="Digite a frase poderosa..."></textarea>
+      </div>
+      <div class="form-group">
+        <label for="nome">Nome (ex: Mind Power)</label>
+        <input type="text" id="nome" value="Mind Power" />
+      </div>
+      <div class="form-group">
+        <label for="likes">Likes Iniciais</label>
+        <input type="number" id="likes" value="0" />
+      </div>
+      <button class="btn" onclick="adicionarFrase()">Adicionar Frase</button>
+    </div>
+
+    <h2>📝 Frases Atuais</h2>
+    <div class="quotes-list" id="quotes-list">
+      <div class="loading">Carregando frases...</div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script>
+    // Configuração do Firebase (mesma do index.html)
+    const firebaseConfig = {
+      apiKey: "AIzaSyDj1qqCBztEpF31n9UU3DFKwiymc2Bd-iM",
+      authDomain: "bot-ia-20e75.firebaseapp.com",
+      databaseURL: "https://bot-ia-20e75-default-rtdb.firebaseio.com",
+      projectId: "bot-ia-20e75",
+      storageBucket: "bot-ia-20e75.appspot.com",
+      messagingSenderId: "601684351023",
+      appId: "1:601684351023:android:e94d0ab92f512c4cb80eda"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // Referência
+    const frasesRef = db.ref('frases');
+
+    // Carregar frases
+    function carregarFrases() {
+      const list = document.getElementById('quotes-list');
+      list.innerHTML = '<div class="loading">Carregando frases...</div>';
+
+      frasesRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        list.innerHTML = '';
+        if (data) {
+          Object.keys(data).reverse().forEach(key => {
+            const item = data[key];
+            const id = key;
+            const editFormId = `edit-form-${id}`;
+
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'quote-item';
+            itemDiv.innerHTML = `
+              <div id="view-${id}">
+                <div class="quote-text">"${item.frase}"</div>
+                <div class="quote-footer">
+                  <span><strong>Por:</strong> ${item.nome} | <strong>Likes:</strong> ${item.likes}</span>
+                  <div class="quote-actions">
+                    <button class="edit-btn" onclick="toggleEdit('${id}', '${item.frase.replace(/'/g, "\\'")}', '${item.nome.replace(/'/g, "\\'")}', ${item.likes})">Editar</button>
+                    <button class="delete-btn" onclick="apagarFrase('${id}')">Apagar</button>
+                  </div>
+                </div>
+              </div>
+              <div id="${editFormId}" style="display:none;">
+                <textarea>${item.frase}</textarea>
+                <div style="margin: 10px 0; display: flex; gap: 10px;">
+                  <input type="text" value="${item.nome}" placeholder="Nome" style="flex:1; padding:8px;">
+                  <input type="number" value="${item.likes}" placeholder="Likes" style="width:80px; padding:8px;">
+                </div>
+                <button class="btn" onclick="salvarEdicao('${id}')">Salvar</button>
+                <button class="btn" onclick="toggleEdit('${id}')" style="background:#999;">Cancelar</button>
+              </div>
+            `;
+            list.appendChild(itemDiv);
+          });
+        } else {
+          list.innerHTML = '<div class="quote-item">Nenhuma frase cadastrada.</div>';
+        }
+      });
+    }
+
+    // Alternar entre visualização e edição
+    function toggleEdit(id, frase, nome, likes) {
+      document.getElementById(`view-${id}`).style.display = document.getElementById(`view-${id}`).style.display === 'none' ? 'block' : 'none';
+      document.getElementById(`edit-form-${id}`).style.display = document.getElementById(`edit-form-${id}`).style.display === 'none' ? 'block' : 'none';
+    }
+
+    // Adicionar nova frase
+    function adicionarFrase() {
+      const frase = document.getElementById('frase').value.trim();
+      const nome = document.getElementById('nome').value.trim();
+      const likes = parseInt(document.getElementById('likes').value) || 0;
+
+      if (!frase) {
+        alert('A frase não pode estar vazia!');
+        return;
+      }
+
+      frasesRef.push({
+        frase,
+        nome,
+        likes
+      }).then(() => {
+        document.getElementById('frase').value = '';
+        alert('Frase adicionada com sucesso!');
+      }).catch(err => {
+        alert('Erro: ' + err.message);
+      });
+    }
+
+    // Apagar frase
+    function apagarFrase(id) {
+      if (confirm('Tem certeza que deseja apagar esta frase?')) {
+        frasesRef.child(id).remove();
+      }
+    }
+
+    // Salvar edição
+    function salvarEdicao(id) {
+      const itemDiv = document.getElementById(`edit-form-${id}`);
+      const inputs = itemDiv.querySelectorAll('input, textarea');
+      const frase = inputs[0].value.trim();
+      const nome = inputs[1].value.trim();
+      const likes = parseInt(inputs[2].value) || 0;
+
+      if (!frase) {
+        alert('A frase não pode estar vazia!');
+        return;
+      }
+
+      frasesRef.child(id).update({
+        frase,
+        nome,
+        likes
+      }).then(() => {
+        alert('Frase atualizada!');
+        toggleEdit(id);
+      }).catch(err => {
+        alert('Erro: ' + err.message);
+      });
+    }
+
+    // Carregar ao iniciar
+    window.onload = carregarFrases;
+  </script>
+
+</body>
+</html>
