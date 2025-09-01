@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Frases MindPower</title>
+
+  <!-- Favicon (nome exato: favicon.ico na raiz do site) -->
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+
+  <!-- Fontes -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+  <!-- Ícones (Font Awesome) -->
+  <script src="https://kit.fontawesome.com/a2f8a9e8e1.js" crossorigin="anonymous"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #ffffff;
+      color: #1e293b;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 50px 20px;
+      line-height: 1.7;
+    }
+
+    .container {
+      max-width: 900px;
+      width: 100%;
+      text-align: center;
+    }
+
+    /* Cabeçalho */
+    .header {
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 3.2rem;
+      font-weight: 700;
+      color: #1e40af;
+      font-family: 'Playfair Display', serif;
+      letter-spacing: -0.5px;
+    }
+
+    .header h1 span {
+      color: #7c3aed;
+      position: relative;
+    }
+
+    .header h1 span::after {
+      content: '';
+      position: absolute;
+      bottom: 8px;
+      left: 0;
+      width: 100%;
+      height: 8px;
+      background: rgba(124, 58, 237, 0.15);
+      z-index: -1;
+      border-radius: 4px;
+    }
+
+    .header p {
+      font-size: 1.2rem;
+      color: #64748b;
+      margin-top: 12px;
+      font-weight: 500;
+    }
+
+    /* Categorias */
+    .categories {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .btn {
+      padding: 13px 26px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #475569;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn:hover {
+      background: #e2e8f0;
+      transform: translateY(-2px);
+    }
+
+    .btn.active {
+      background: #7c3aed;
+      color: white;
+      border-color: #7c3aed;
+      box-shadow: 0 6px 16px rgba(124, 58, 237, 0.35);
+    }
+
+    /* Área de frases */
+    .quotes-container {
+      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .quote-card {
+      background: white;
+      padding: 32px;
+      border-radius: 16px;
+      max-width: 700px;
+      width: 100%;
+      text-align: left;
+      box-shadow: 0 10px 25px -10px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e2e8f0;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.7s forwards;
+      transition: transform 0.3s ease;
+    }
+
+    .quote-card:hover {
+      transform: translateY(4px) scale(1.005);
+      box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.12);
+    }
+
+    .quote-card p {
+      font-size: 1.4rem;
+      line-height: 1.7;
+      margin-bottom: 16px;
+      color: #0f172a;
+      font-weight: 500;
+    }
+
+    .quote-card small {
+      color: #7c3aed;
+      font-style: normal;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Rodapé */
+    footer {
+      margin-top: 60px;
+      color: #94a3b8;
+      font-size: 0.95rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .footer-text {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .footer-text strong {
+      color: #7c3aed;
+    }
+
+    .btn-facebook {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #1877f2;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background 0.3s ease;
+      box-shadow: 0 4px 10px rgba(24, 119, 242, 0.3);
+    }
+
+    .btn-facebook:hover {
+      background: #166fe5;
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 600px) {
+      .header h1 {
+        font-size: 2.4rem;
+      }
+      .quote-card p {
+        font-size: 1.2rem;
+      }
+      .btn {
+        padding: 10px 18px;
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header class="header">
+      <h1>Frases <span>MindPower</span></h1>
+      <p>Palavras que transformam</p>
+    </header>
+
+    <div class="categories">
+      <button class="btn active" onclick="mostrarFrases('motivacao')">Motivação</button>
+      <button class="btn" onclick="mostrarFrases('reflexao')">Reflexão</button>
+      <button class="btn" onclick="mostrarFrases('amor')">Amor</button>
+      <button class="btn" onclick="mostrarFrases('sabedoria')">Sabedoria</button>
+      <button class="btn" onclick="mostrarFrases('coragem')">Coragem</button>
+      <button class="btn" onclick="mostrarFrases('humor')">Humor</button>
+    </div>
+
+    <div class="quotes-container" id="quotes-container">
+      <div class="loading">Carregando frases inspiradoras...</div>
+    </div>
+
+    <footer>
+      <div class="footer-text">
+        <i class="fas fa-heart" style="color: #e53e3e;"></i>
+        Criado com paixão por <strong>MindPower</strong>
+      </div>
+      <a href="https://www.facebook.com/profile.php?id=61580141993544" target="_blank" class="btn-facebook">
+        <i class="fab fa-facebook-f"></i>
+        Siga no Facebook
+      </a>
+    </footer>
+  </div>
+
+  <script>
+    // Banco de frases (10 por categoria)
+    const frases = {
+      motivacao: [
+        { text: "Você é mais forte do que imagina. Cada desafio é uma oportunidade de crescer.", author: "MindPower" },
+        { text: "O sucesso começa quando você decide não desistir.", author: "MindPower" },
+        { text: "Acredite: você está mais perto do que pensa.", author: "MindPower" },
+        { text: "Grandes conquistas nascem de pequenas decisões diárias.", author: "MindPower" },
+        { text: "Não espere a perfeição. Comece agora.", author: "MindPower" },
+        { text: "O impossível é só um ponto de vista.", author: "MindPower" },
+        { text: "Sua mente é mais poderosa do que qualquer obstáculo.", author: "MindPower" },
+        { text: "Cada dia é uma nova chance de recomeçar.", author: "MindPower" },
+        { text: "O medo perde quando você age.", author: "MindPower" },
+        { text: "Você não precisa ser grande para começar, mas precisa começar para ser grande.", author: "MindPower" }
+      ],
+      reflexao: [
+        { text: "Pense antes de agir, escute antes de julgar, ame antes de exigir.", author: "MindPower" },
+        { text: "A vida não se mede em anos, mas em momentos que tiram o fôlego.", author: "MindPower" },
+        { text: "O que você alimenta dentro de si cresce.", author: "MindPower" },
+        { text: "O silêncio muitas vezes diz mais que mil palavras.", author: "MindPower" },
+        { text: "Conhecer a si mesmo é o começo de toda sabedoria.", author: "MindPower" },
+        { text: "As respostas estão dentro de você, não fora.", author: "MindPower" },
+        { text: "O tempo cura, mas a escolha de seguir em frente é sua.", author: "MindPower" },
+        { text: "O que você foca, cresce. Escolha bem.", author: "MindPower" },
+        { text: "A paz começa quando você para de lutar contra si mesmo.", author: "MindPower" },
+        { text: "Nada muda até que você decida mudar.", author: "MindPower" }
+      ],
+      amor: [
+        { text: "O verdadeiro amor não domina, ilumina.", author: "MindPower" },
+        { text: "Amar é escolher alguém todos os dias.", author: "MindPower" },
+        { text: "O amor começa em casa: com você mesmo.", author: "MindPower" },
+        { text: "Amor verdadeiro é paciência, respeito e presença.", author: "MindPower" },
+        { text: "Não busque alguém perfeito, busque alguém real.", author: "MindPower" },
+        { text: "O amor cura o que o tempo não consegue.", author: "MindPower" },
+        { text: "Quem ama, cuida. Quem finge, desaparece.", author: "MindPower" },
+        { text: "Amor não é posse, é liberdade com responsabilidade.", author: "MindPower" },
+        { text: "O melhor amor é aquele que nos faz crescer.", author: "MindPower" },
+        { text: "Amor próprio é a base de todo amor saudável.", author: "MindPower" }
+      ],
+      sabedoria: [
+        { text: "A sabedoria não está em ter todas as respostas, mas em saber perguntar.", author: "MindPower" },
+        { text: "Quem escuta mais do que fala, aprende mais do que ensina.", author: "MindPower" },
+        { text: "O sábio não evita o erro, ele aprende com ele.", author: "MindPower" },
+        { text: "A verdadeira inteligência é saber o quanto você não sabe.", author: "MindPower" },
+        { text: "A sabedoria começa onde termina o ego.", author: "MindPower" },
+        { text: "Palavras sábias são poucas, mas profundas.", author: "MindPower" },
+        { text: "O silêncio do sábio vale mais que o discurso do tolo.", author: "MindPower" },
+        { text: "A sabedoria não se ensina, se vive.", author: "MindPower" },
+        { text: "Conhecimento é poder, mas sabedoria é paz.", author: "MindPower" },
+        { text: "A maior sabedoria é saber viver com simplicidade.", author: "MindPower" }
+      ],
+      coragem: [
+        { text: "Coragem não é ausência de medo, é agir apesar dele.", author: "MindPower" },
+        { text: "Ter coragem de ser diferente é ser extraordinário.", author: "MindPower" },
+        { text: "Levante-se com mais força cada vez que cair.", author: "MindPower" },
+        { text: "A coragem começa onde sua zona de conforto termina.", author: "MindPower" },
+        { text: "Coragem é seguir em frente mesmo quando ninguém vai com você.", author: "MindPower" },
+        { text: "A maior coragem é dizer 'não' quando todos dizem 'sim'.", author: "MindPower" },
+        { text: "Coragem não grita. Ela simplesmente age.", author: "MindPower" },
+        { text: "Você é mais corajoso do que pensa.", author: "MindPower" },
+        { text: "Coragem é escolher a verdade mesmo que doa.", author: "MindPower" },
+        { text: "O mundo muda com quem tem coragem de começar.", author: "MindPower" }
+      ],
+      humor: [
+        { text: "Rir de si mesmo é o começo da sabedoria.", author: "MindPower" },
+        { text: "A vida é muito curta para ser levada a sério o tempo todo.", author: "MindPower" },
+        { text: "Se tudo der errado, pelo menos você tem uma boa história.", author: "MindPower" },
+        { text: "O humor é o alívio da alma.", author: "MindPower" },
+        { text: "Rir é o melhor exercício para o coração.", author: "MindPower" },
+        { text: "O sorriso é a linguagem universal da alegria.", author: "MindPower" },
+        { text: "Quem ri, vive mais. Quem ri de si, vive melhor.", author: "MindPower" },
+        { text: "O bom humor é antídoto contra o caos.", author: "MindPower" },
+        { text: "Um dia sem riso é um dia perdido.", author: "MindPower" },
+        { text: "O humor transforma dor em leveza.", author: "MindPower" }
+      ]
+    };
+
+    function mostrarFrases(categoria) {
+      document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      const container = document.getElementById('quotes-container');
+      container.innerHTML = '';
+
+      const lista = frases[categoria] || [];
+
+      lista.forEach(frase => {
+        const card = document.createElement('div');
+        card.className = 'quote-card';
+        card.innerHTML = `
+          <p>"${frase.text}"</p>
+          <small>— ${frase.author}</small>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    window.onload = () => mostrarFrases('motivacao');
+  </script>
+</body>
+</html>
