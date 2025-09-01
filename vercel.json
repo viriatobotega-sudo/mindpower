@@ -1,0 +1,27 @@
+{
+  "routes": [
+    {
+      "src": "/php",
+      "dest": "/painel.html"
+    },
+    {
+      "src": "/frases",
+      "dest": "/frases.html"
+    },
+    {
+      "src": "/sobre",
+      "dest": "/sobre.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    }
+  ]
+}
