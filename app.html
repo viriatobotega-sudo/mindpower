@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>TikDown PWA</title>
+  <meta name="description" content="Baixe vídeos do TikTok sem marca d'água. Instale como app no seu celular." />
+  <meta name="theme-color" content="#0066ff" />
+
+  <!-- Manifest PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon.png" sizes="any">
+  <link rel="apple-touch-icon" href="icon-192.png" />
+
+  <!-- Fonte -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #ffffff;
+      color: #111;
+      padding: 50px 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #000;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    p {
+      color: #555;
+      margin-bottom: 30px;
+      text-align: center;
+      max-width: 500px;
+    }
+    .input-group {
+      width: 100%;
+      max-width: 500px;
+      margin-bottom: 30px;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 16px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      font-size: 1rem;
+      outline: none;
+    }
+    button {
+      padding: 14px 28px;
+      background: #0066ff;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0055d4;
+    }
+    .loader {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #0066ff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+      display: none;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .video-preview {
+      margin: 30px auto;
+      max-width: 320px;
+      display: none;
+    }
+    .video-preview video {
+      width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .video-preview a {
+      display: block;
+      margin-top: 16px;
+      padding: 14px;
+      background: #0066ff;
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .install-btn {
+      display: none;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #008800;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>TikDown PWA</h1>
+  <p>Baixe vídeos do TikTok sem marca d'água. Instale este site como um app.</p>
+
+  <div class="input-group">
+    <input type="text" id="videoUrl" placeholder="Cole o link do TikTok aqui" />
+  </div>
+  <button id="fetchBtn">▶ Baixar Vídeo</button>
+  <button id="installButton" class="install-btn">📲 Instalar App</button>
+
+  <div class="loader" id="loader"></div>
+
+  <div class="video-preview" id="videoPreview">
+    <video id="videoPlayer" controls></video>
+    <a id="downloadLink" download>Baixar Vídeo</a>
+  </div>
+
+  <script>
+    const videoUrl = document.getElementById('videoUrl');
+    const fetchBtn = document.getElementById('fetchBtn');
+    const loader = document.getElementById('loader');
+    const videoPreview = document.getElementById('videoPreview');
+    const videoPlayer = document.getElementById('videoPlayer');
+    const downloadLink = document.getElementById('downloadLink');
+    const installButton = document.getElementById('installButton');
+
+    let deferredPrompt;
+
+    // Detectar se pode instalar
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installButton.style.display = 'block';
+    });
+
+    // Botão de instalar
+    installButton.addEventListener('click', () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => {
+          installButton.style.display = 'none';
+          deferredPrompt = null;
+        });
+      }
+    });
+
+    // Baixar vídeo
+    fetchBtn.addEventListener('click', async () => {
+      const url = videoUrl.value.trim();
+      if (!url) return;
+
+      loader.style.display = 'block';
+      videoPreview.style.display = 'none';
+
+      try {
+        // Usando API pública confiável
+        const proxy = 'https://corsproxy.io/?';
+        const api = `https://tikwm.com/api?url=${encodeURIComponent(url)}`;
+        const response = await fetch(proxy + encodeURIComponent(api));
+        const data = await response.json();
+
+        if (data.data?.nwm_video_url) {
+          const videoSrc = data.data.nwm_video_url;
+          videoPlayer.src = videoSrc;
+          downloadLink.href = videoSrc;
+          videoPreview.style.display = 'block';
+        } else {
+          alert('Não foi possível baixar. Link inválido.');
+        }
+      } catch (err) {
+        alert('Erro ao processar. Verifique o link.');
+      } finally {
+        loader.style.display = 'none';
+      }
+    });
+
+    videoUrl.addEventListener('keypress', e => {
+      if (e.key === 'Enter') fetchBtn.click();
+    });
+  </script>
+
+</body>
+</html>
